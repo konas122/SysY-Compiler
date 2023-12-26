@@ -37,11 +37,11 @@ ERRORINT    [0-9]+.[0-9]+
 %%
 
 
-{BLOCKCOMMENT_BEGIN} {BEGIN BLOCKCOMMENT;}
-<BLOCKCOMMENT>{BLOCKCOMMENT_ELE} {}
-<BLOCKCOMMENT>{BLOCKCOMMENT_LINE} {lineno++;}
-<BLOCKCOMMENT>{BLOCKCOMMENT_END} {BEGIN INITIAL;}
-{LINECOMMENT}  {}
+{BLOCKCOMMENT_BEGIN}    { BEGIN BLOCKCOMMENT; }
+<BLOCKCOMMENT>{BLOCKCOMMENT_ELE}    {}
+<BLOCKCOMMENT>{BLOCKCOMMENT_LINE}   { lineno++; }
+<BLOCKCOMMENT>{BLOCKCOMMENT_END}    { BEGIN INITIAL; }
+{LINECOMMENT}   {}
 
 "int" return T_INT;
 "bool" return T_BOOL;
@@ -209,7 +209,7 @@ ERRORINT    [0-9]+.[0-9]+
 
 {WHILTESPACE} {}
 
-{EOL} {lineno++;}
+{EOL} { lineno++; }
 
 . {
     cerr << "[line "<< lineno <<" ] unknown character:" << yytext << endl;

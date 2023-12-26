@@ -394,7 +394,7 @@ funcDef
 funcLPAREN : LPAREN { scopePush(); };
 
 funcFParams
-: funcFParam {$$ = $1;}
+: funcFParam { $$ = $1; }
 | funcFParams COMMA funcFParam { $$ = $1; $$->addSibling($3); }
 ;
 
@@ -805,6 +805,7 @@ relExpr
 
 
 %%
+
 
 int yyerror(char const * message) {
 	cerr << "Error: " << message << ", at line " << lineno << endl;
