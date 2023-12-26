@@ -1,6 +1,7 @@
 #ifndef __TYPE_H__
 #define __TYPE_H__
 
+#include "debug.h"
 #include "global.h"
 
 using namespace std;
@@ -9,32 +10,6 @@ using namespace std;
 #define MAX_ARRAY_DIM 8
 #define MAX_SCOPE_STACK 32
 #define SCOPT_ID_BASE '1'
-
-
-// #define EXIT_AT_GRAMMA_ERROR
-
-// #define DEBUG
-#ifdef DEBUG
-
-// #define AST
-// #define PARSER_DEBUG
-#ifdef PARSER_DEBUG
-#define SCOPE_DEBUG
-#define ID_REDUCE_DEBUG
-
-#define DECL_DEBUG
-#define POINT_DEBUG
-#define ASSIGN_DEBUG
-#define IF_DEBUG
-#define IFELSE_DEBUG
-#define WHILE_DEBUG
-#define FUNCALL_DEBUG
-#endif
-
-#define semanticCheck_debug
-#define childNumdebug
-#define varDeclDebug
-#endif
 
 
 enum ValueType {

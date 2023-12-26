@@ -22,7 +22,7 @@ extern map<pair<string, string>, TreeNode*> idList;
 bool inCycle = false;
 
 int yylex();
-int yyerror( char const * );
+int yyerror(char const *);
 int scopeCmp(string preScope, string varScope);
 void scopePush();
 void scopePop();
