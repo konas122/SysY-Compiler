@@ -1,0 +1,16 @@
+.vs/
+.idea/
+.vscode/
+
+*.exe
+main
+*.pdb
+result.txt
+
+global.h.gch
+main.output
+main.tab.h
+main.tab.c
+main.tab.cpp
+main.l.yy.c
+main.l.yy.cpp
