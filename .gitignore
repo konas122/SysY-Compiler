@@ -2,9 +2,14 @@
 .idea/
 .vscode/
 
+*.so
+*.dll
+*.lib
 *.exe
-main
 *.pdb
+
+main
+parser
 result.txt
 
 global.h.gch

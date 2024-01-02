@@ -212,7 +212,7 @@ ERRORINT    [0-9]+.[0-9]+
 {EOL} { lineno++; }
 
 . {
-    cerr << "[line "<< lineno <<" ] unknown character:" << yytext << endl;
+    cerr << "Error at line " << lineno << ": Unknown character: \"" << yytext << "\"" << endl;
 }
 
 {ERRORHEX}  { fprintf(stderr, "Error type number at line %d: Illegal number %s\n", lineno, yytext); }

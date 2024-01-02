@@ -4,6 +4,7 @@
 extern TreeNode *root;
 extern FILE *yyin;
 extern int yyparse();
+
 bool parserError = false;
 bool typeError = false;
 
@@ -24,7 +25,7 @@ int main(int argc, char *argv[]) {
     InitIOFunctionNode();
     yyparse();
 
-    if (parserError)
+    if (parserError || root == nullptr)
         return 0;
 
     root->genNodeId();

@@ -2,6 +2,9 @@ CC := g++
 CFLAGS := -w -Wextra -std=c++11
 TARGET := ./build/main
 
+SYNTAX_ACCHECK := 1
+
+
 all: run
 
 src/main.l.yy.c: src/sysy.l
@@ -27,6 +30,7 @@ run: lex yacc main
 clean:
 	rm -f src/*.output src/main.l.yy.cpp src/main.tab.cpp src/main.tab.h src/main.output src/global.h.gch $(TARGET) *.o ./build/* 
 
+
 syntax: run
 	./build/main test/syntax/test.c > result.txt
 
@@ -36,17 +40,43 @@ syntax0: run
 syntax1: run
 	./build/main test/syntax/test1.c > result.txt
 
-syntax2: run
-	./build/main test/syntax/test2.c > result.txt
-
 syntax3: run
 	./build/main test/syntax/test3.c > result.txt
 
 syntax4: run
 	./build/main test/syntax/test4.c > result.txt
 
+ifeq ($(SYNTAX_ACCHECK), 0)
+syntax2: run
+	echo ""
+	./build/main test/syntax/test2.c > result.txt
+
 syntax5: run
+	echo ""
 	./build/main test/syntax/test5.c > result.txt
+
+1:
+	echo ""
+	./build/parser test/syntax/test1.c
+
+2:
+	echo ""
+	./build/parser test/syntax/test1.c
+
+5:
+	echo ""
+	./build/parser test/syntax/test1.c
+
+else
+syntax2: run
+	echo ""
+	./build/parser test/syntax/test2.c
+
+syntax5: run
+	echo ""
+	./build/parser test/syntax/test5.c
+
+endif
 
 
 check1: run
