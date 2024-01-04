@@ -13,10 +13,10 @@ map<pair<string, string>, TreeNode *> idList;
 // map <字符串,  标签序列号> 字符串表
 map<string, int> strList;
 
-// map <作用域+变量名,  变量相对于ebp偏移量> 局部变量表, 在每次函数定义前清空
-// <"11a", "-12"> 表示第一个函数的栈上第一个分配的局部变量（前3个4字节为bx,cx,dx备份用, 始终保留）
+// map <作用域+变量名,  变量相对于 ebp 偏移量> 局部变量表, 在每次函数定义前清空
+// <"11a", "-12"> 表示第一个函数的栈上第一个分配的局部变量 (前 3 个 4 字节为 bx, cx, dx 备份用, 始终保留)
 map<string, int> LocalVarList;
-// 栈上为局部变量分配的空间总大小, 在return时进行清理
+// 栈上为局部变量分配的空间总大小, 在 return 时进行清理
 int stackSize;
 
 // 当前所处函数的声明结点指针, return使用
@@ -649,6 +649,8 @@ void TreeNode::printConstVal() {
 }
 
 
+// ============================ IO 函数初始化 ====================================
+
 void InitIOFunctionNode() {
     int k = 4;
 
@@ -676,4 +678,283 @@ void InitIOFunctionNode() {
 
     idNameList.insert(make_pair("printf", "1"));
     idList[make_pair("printf", "1")] = nodePrintf;
+}
+
+
+// ============================ asm 代码生成 =====================================
+
+void TreeNode::gen_var_decl() {
+    if (nodeType == NODE_PROG) {
+        // 根节点下只处理全局变量声明
+        TreeNode *p = child;
+        bool print_data = false;
+        while (p) {
+
+            // 发现了 p 为定义语句, LeftChild 为类型, RightChild 为声明表
+            if (p->stype == STMT_DECL || p->stype == STMT_CONSTDECL) {
+
+                // q 为变量表语句, 可能为标识符或者赋值声明运算符
+                TreeNode *q = p->child->sibling->child;
+
+                while (q) {
+                    if (!print_data) {
+                        // 第一次遇到全局变量的时候输出
+                        print_data = true;
+                        cout << "\t.text" << endl
+                             << "\t.data" << endl
+                             << "\t.align\t4" << endl;
+                    }
+
+                    TreeNode *t = q;
+                    if (q->nodeType == NODE_OP && q->optype == OP_DECLASSIGN) {
+                        t = q->child;
+                    }
+                    // 遍历常变量列表, 指针类型视为 4 字节 int
+                    int varsize = ((t->type->pointLevel == 0) ? t->type->getSize() : 4);
+                    if (t->type->dim > 0) {
+                        t->type->elementType = p->child->type->type;
+                        t->type->type = VALUE_ARRAY;
+                        varsize = t->type->getSize();
+                    }
+                    cout << "\t.globl\t" << t->var_name << endl
+                         << "\t.type\t" << t->var_name << ", @object" << endl
+                         << "\t.size\t" << t->var_name << ", " << varsize << endl
+                         << t->var_name << ":" << endl;
+                    
+                    if (q->nodeType == NODE_OP && q->optype == OP_DECLASSIGN) {
+                        // 声明时赋值
+                        // 只处理字面量初始化值
+                        if (t->type->dim == 0) {    // 单个值
+                            cout << "\t.long\t" << t->sibling->getVal() << endl;
+                        }
+                        else {  // 数组
+                            for (TreeNode *pe = t->sibling->child; pe != nullptr; pe = pe->sibling)
+                                cout << "\t.long\t" << 4 * pe->getVal() << endl;
+                        }
+                    }
+                    else {
+                        // 声明时未赋值，默认初始化值为0
+                        // 只处理字面量初始化值
+                        if (t->type->dim == 0) {    // 单个值
+                            cout << "\t.long\t0" << endl;
+                        }
+                        else {  // 数组
+                            int size = 1;
+                            for (unsigned int i = 0; i < t->type->dim; i++)
+                                size *= t->type->dimSize[i];
+                            cout << "\t.zero\t" << size << endl;
+                        }
+                    }
+                    q = q->sibling;
+                }
+            }
+            p = p->sibling;
+        }
+    }
+    else if (nodeType == NODE_STMT && stype == STMT_FUNCDECL) {
+        // 对于函数声明语句, 递归查找局部变量声明
+        LocalVarList.clear();
+        stackSize  = -12;
+        int paramSize = 8;
+
+#ifdef varDeclDebug
+        cout << "# gen_var_decl in funcDecl init" << endl;
+#endif
+
+        // 遍历参数定义列表
+        TreeNode *p = child->sibling->sibling->child;
+        while (p) {
+            // 只能是基本数据类型，简便起见一律分配 4 字节
+            LocalVarList[p->child->sibling->var_scope + p->child->sibling->var_name] = paramSize;
+            paramSize += 4;
+            p = p->sibling;
+        }
+
+#ifdef varDeclDebug
+        cout << "# gen_var_decl in funcDecl param fin" << endl;
+#endif
+        // 遍历代码段, 查找函数内声明的局部变量
+        p = child->sibling->sibling->sibling->child;
+        while (p) {
+            p->gen_var_decl();
+            p = p->sibling;
+        }
+
+#ifdef varDeclDebug
+        cout << "# gen_var_decl in funcDecl fin" << endl;
+#endif
+    }
+    else if (nodeType == NODE_STMT && (stype == STMT_DECL || stype == STMT_CONSTDECL)) {
+
+#ifdef varDeclDebug
+        cout << "# gen_var_decl found varDecl stmt at node " << nodeID << endl;
+#endif
+        // 找到了局部变量定义
+        TreeNode *q = child->sibling->child;
+        while (q) {
+            // 遍历常变量列表，指针类型视为 4 字节 int
+            // q 为标识符或声明赋值运算符
+            TreeNode *t = q;
+            // 声明时赋值
+            if (q->nodeType == NODE_OP && q->optype == OP_DECLASSIGN)
+                t = q->child;
+
+            int varsize = ((t->type->pointLevel == 0) ? t->type->getSize() : 4);
+            
+            if (t->type->dim > 0) {
+                t->type->type = VALUE_ARRAY;
+                varsize = t->type->getSize();
+            }
+            LocalVarList[t->var_scope + t->var_name] = stackSize;
+            stackSize -= varsize;
+            q = q->sibling;
+        }
+    }
+    else {
+        // 在函数定义语句块内部递归查找局部变量声明
+        TreeNode *p = child;
+        while (p) {
+            p->gen_var_decl();
+            p = p->sibling;
+        }
+    }
+}
+
+void TreeNode::gen_str() {
+    static int strseq = 0;
+    static bool print_rodata = false;
+    TreeNode *p = this->child;
+    while (p) {
+        if (p->nodeType == NODE_CONST && p->type->type == VALUE_STRING) {
+            if (!print_rodata) {
+                print_rodata = true;
+                cout << "\t.section\t.rodata" << endl;
+            }
+            if (strList.count(p->str_val) == 0) {
+                strList[p->str_val] = strseq;
+                cout << ".LC" << strseq++ << ":" << endl
+                        << "\t.string\t" << "\"" << p->str_val << "\"" << endl;
+            }
+        }
+        else if (p->child) {
+            p->gen_str();
+        }
+        p = p->sibling;
+    }
+}
+
+string TreeNode::new_label() {
+    static int label_seq = 0;
+    string labelStr = ".L";
+    labelStr += label_seq++;
+    return labelStr;
+}
+
+void TreeNode::get_label() {
+    string temp;
+    switch (nodeType)
+    {
+    case NODE_STMT:
+        switch (stype)
+        {
+        case STMT_FUNCDECL:
+            this->label.begin_label = this->child->sibling->var_name;
+            // next 为 return 和局部变量清理
+            this->label.next_label = ".LRET_" + this->child->sibling->var_name;
+            break;
+
+        case STMT_IF:
+            this->label.begin_label = new_label();
+            this->label.true_label = new_label();
+            this->label.false_label = this->label.next_label = new_label();
+            this->child->label.true_label = this->label.true_label;
+            this->child->label.false_label = this->label.false_label;
+            break;
+
+        case STMT_IFELSE:
+            this->label.begin_label = new_label();
+            this->label.true_label = new_label();
+            this->label.false_label = new_label();
+            this->label.next_label = new_label();
+            this->child->label.true_label = this->label.true_label;
+            this->child->label.false_label = this->label.false_label;
+            break;
+
+        case STMT_WHILE:
+            this->label.begin_label = this->label.next_label = new_label();
+            this->label.true_label = new_label();
+            this->label.false_label = new_label();
+            this->child->label.true_label = this->label.true_label;
+            this->child->label.false_label = this->label.false_label;
+            break;
+
+        case STMT_FOR:
+            this->label.begin_label = new_label();
+            this->label.true_label = new_label();
+            this->label.false_label = new_label();
+            this->label.next_label = new_label();
+            this->child->sibling->label.true_label = this->label.true_label;
+            this->child->sibling->label.false_label = this->label.false_label;
+            break;
+
+        default:
+            break;
+        }
+        break;
+
+    case NODE_OP:
+        switch (optype)
+        {
+        case OP_AND:
+            child->label.true_label = new_label();
+            child->sibling->label.true_label = label.true_label;
+            child->label.false_label = child->sibling->label.false_label = label.false_label;
+            break;
+
+        case OP_OR:
+            child->label.true_label = child->sibling->label.true_label = label.true_label;
+            child->label.false_label = new_label();
+            child->sibling->label.false_label = label.false_label;
+            break;
+
+        case OP_NOT:
+            child->label.true_label = label.false_label;
+            child->label.false_label = label.true_label;
+            break;
+
+        default:
+            break;
+        }
+        break;   
+
+    default:
+        break;
+    }
+}
+
+string TreeNode::getVarNameCode(TreeNode* p) {
+    string varCode = "";
+    if (p->nodeType == NODE_VAR) {
+        // 标识符
+        if (p->var_scope == "1") {
+            // 全局变量
+            varCode = p->var_name;
+        }
+        else {
+            // 局部变量 (不要跨定义域访问)
+            varCode += LocalVarList[p->var_scope + p->var_name];
+            varCode += "(%ebp)";                
+        }
+    }
+    else {
+        // 数组
+        if (p->child->var_scope == "1") {
+            varCode = p->child->var_name + "(,%eax,4)";
+        }
+        else {
+            varCode += LocalVarList[p->child->var_scope + p->child->var_name];
+            varCode += "(%ebp,%eax,4)";
+        }
+    }
+    return varCode;
 }

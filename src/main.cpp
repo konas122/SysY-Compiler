@@ -30,12 +30,17 @@ int main(int argc, char *argv[]) {
 
     root->genNodeId();
 
+#ifdef AST
     cout << "# --------------------------------------------------" << endl;
     // root->printAST();
     root->printAST_brief();
     cout << "# --------------------------------------------------" << endl;
+#endif
     
     root->semanticCheck();
+
+#ifndef AST
+#endif
 
     if (typeError)
         return 0;

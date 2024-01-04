@@ -85,6 +85,7 @@ public:
 	OperatorType optype;    // 运算符类型
 	StmtType stype;		    // 表达式类型
 	Type* type;			    // 变量、类型、表达式结点, 有类型。
+
 	int int_val;
 	char ch_val;
 	bool b_val;
@@ -121,6 +122,25 @@ public:
 
     void semanticCheck();
     void findReturn(vector<TreeNode *> &retList);
+
+    // ================= asm 代码生成 ======================
+
+    int node_seq = 0;
+	int temp_var_seq = 0;
+	Label label;
+
+	void gen_var_decl();
+	void gen_str();
+
+	string new_label();
+	void get_label();
+
+    // 传入标识符结点或 OP_INDEX 数组下标结点指针, 返回它在汇编中的变量表示.
+	// 注意: 如果传入下标运算符结点, 务必保证此时的 eax 寄存器已经完成了偏移量的计算, 
+	// 即先执行了 OP_INDEX 结点的右子树的 genCode()
+	void genCode();
+
+	string getVarNameCode(TreeNode* p);
 
 public:
 	static string nodeType2String (NodeType type);

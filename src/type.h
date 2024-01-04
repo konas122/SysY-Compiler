@@ -12,6 +12,28 @@ using namespace std;
 #define SCOPT_ID_BASE '1'
 
 
+// #define AST
+// #define DEBUG
+#ifdef DEBUG
+#define PARSER_DEBUG
+#ifdef PARSER_DEBUG
+#define SCOPE_DEBUG
+#define ID_REDUCE_DEBUG
+#define DECL_DEBUG
+#define POINT_DEBUG
+#define ASSIGN_DEBUG
+#define IF_DEBUG
+#define IFELSE_DEBUG
+#define WHILE_DEBUG
+#define FUNCALL_DEBUG
+#endif
+
+// #define typeCheck_debug
+// #define childNumdebug
+// #define varDeclDebug
+// #define EXIT_AT_GRAMMA_ERROR
+
+
 enum ValueType {
     NOTYPE,
     VALUE_BOOL,
