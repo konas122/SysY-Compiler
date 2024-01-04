@@ -84,7 +84,7 @@ public:
 	NodeType nodeType;
 	OperatorType optype;    // 运算符类型
 	StmtType stype;		    // 表达式类型
-	Type* type;			    // 变量、类型、表达式结点，有类型。
+	Type* type;			    // 变量、类型、表达式结点, 有类型。
 	int int_val;
 	char ch_val;
 	bool b_val;
@@ -94,7 +94,7 @@ public:
     int pointLevel;
 
 	TreeNode(int lineno, NodeType type);
-    // 仅用于叶节点拷贝，函数不复制子节点，也不复制子节点指针
+    // 仅用于叶节点拷贝, 函数不复制子节点, 也不复制子节点指针
 	TreeNode(TreeNode* node);
 
     void addChild(TreeNode *);

@@ -5,24 +5,24 @@ using namespace std;
 
 /* ============================ 全局变量 =============================== */
 
-// multimap <标识符名称， 作用域> 变量名列表
+// multimap <标识符名称,  作用域> 变量名列表
 multimap<string, string> idNameList;
-// map <<标识符名称， 作用域>, 结点指针> 变量列表
+// map <<标识符名称,  作用域>, 结点指针> 变量列表
 map<pair<string, string>, TreeNode *> idList;
 
-// map <字符串， 标签序列号> 字符串表
+// map <字符串,  标签序列号> 字符串表
 map<string, int> strList;
 
-// map <作用域+变量名， 变量相对于ebp偏移量> 局部变量表，在每次函数定义前清空
-// <"11a", "-12"> 表示第一个函数的栈上第一个分配的局部变量（前3个4字节为bx,cx,dx备份用，始终保留）
+// map <作用域+变量名,  变量相对于ebp偏移量> 局部变量表, 在每次函数定义前清空
+// <"11a", "-12"> 表示第一个函数的栈上第一个分配的局部变量（前3个4字节为bx,cx,dx备份用, 始终保留）
 map<string, int> LocalVarList;
-// 栈上为局部变量分配的空间总大小，在return时进行清理
+// 栈上为局部变量分配的空间总大小, 在return时进行清理
 int stackSize;
 
-// 当前所处函数的声明结点指针，return使用
+// 当前所处函数的声明结点指针, return使用
 TreeNode *pFunction;
 
-// 循环体栈，为continue与break配对使用
+// 循环体栈, 为continue与break配对使用
 TreeNode *cycleStack[10];
 int cycleStackTop = -1;
 
@@ -113,7 +113,7 @@ void TreeNode::semanticCheck() {
     cout << "# Type check reach @" << nodeID << endl;
 #endif
 
-    // 类型检查时记录循环层数，为 continue 和 break 提供循环外错误检查
+    // 类型检查时记录循环层数, 为 continue 和 break 提供循环外错误检查
     if (nodeType == NODE_STMT && (stype == STMT_FOR || stype == STMT_WHILE))
         cycleStackTop++;
     
@@ -131,12 +131,13 @@ void TreeNode::semanticCheck() {
     // 分情况检查类型错误并对部分情况作强制类型转换
     switch (this->nodeType)
     {
+
     case NODE_FUNCALL:
-        // 函数调用要求标识符是一个函数，且形参表与函数定义一致
+        // 函数调用要求标识符是一个函数, 且形参表与函数定义一致
         if (child->type->type == COMPOSE_FUNCTION) {
             if (child->var_name == "printf" || child->var_name == "scanf") {
                 if (child->sibling->child->type->type != VALUE_STRING) {
-                    cerr << "Error: paramater type doesn`t fit function " << child->var_name
+                    cerr << "Error: paramater type doesn't fit function " << child->var_name
                          << "need <string>, got " << child->sibling->child->type->getTypeInfo()
                          << " , at line " << lineno << endl;
                     typeError = true;
@@ -147,7 +148,7 @@ void TreeNode::semanticCheck() {
                 int paracnt = 0;
                 TreeNode *param = child->sibling->child;
                 while (param!=nullptr) {
-                    if (child->type->paramType[paracnt] != TYPE_NONE // 无类型表示支持任意类型，在scanf和printf上使用
+                    if (child->type->paramType[paracnt] != TYPE_NONE    // 无类型表示支持任意类型, 在 scanf 和 printf 上使用
                         && child->type->paramType[paracnt]->type != param->type->type) {
                         cerr << "Error: paramater type doesn't fit function " << child->var_name
                                 << " got " << param->type->getTypeInfo()
@@ -172,10 +173,12 @@ void TreeNode::semanticCheck() {
             this->type = new Type(NOTYPE);
         this->type->copy(child->type->retType);
         break;
+
     case NODE_STMT:
         // statement 无类型
         this->type = TYPE_NONE;
-        switch (stype) {
+        switch (stype)
+        {
         case STMT_FUNCDECL: {
             vector<TreeNode *> retList;
             findReturn(retList);
@@ -199,7 +202,7 @@ void TreeNode::semanticCheck() {
                     for (int i = 0; i < size; i++) {
                         if (retList[i]->child) {
                             if (retList[i]->child->type->type != child->type->type) {
-                                cerr << "Error: return type can`t fit function return type, at line " 
+                                cerr << "Error: return type can't fit function return type, at line " 
                                 << retList[i]->lineno << endl;
                             typeError = true;
                             }
@@ -213,12 +216,13 @@ void TreeNode::semanticCheck() {
             }
             break;
         }
+
         case STMT_IF:
         case STMT_IFELSE:
         case STMT_WHILE:
             if (child->type->type != VALUE_BOOL) {
                 if (child->type->type == VALUE_INT) {
-                    // 强制类型转换，添加一个"!=0"运算过程
+                    // 强制类型转换, 添加一个"!=0"运算过程
                     TreeNode *eq = new TreeNode(child->lineno, NODE_OP);
                     eq->sibling = child->sibling;
                     eq->child = child;
@@ -241,6 +245,7 @@ void TreeNode::semanticCheck() {
             if (stype == STMT_WHILE)
                 cycleStackTop--;
             break;
+
         case STMT_FOR:
             if (child->sibling->type->type != VALUE_BOOL) {
                 if (child->sibling->type->type == VALUE_INT) {
@@ -256,6 +261,7 @@ void TreeNode::semanticCheck() {
             if (stype == STMT_FOR)
                 cycleStackTop--;
             break;
+
         case STMT_BREAK:
         case STMT_CONTINUE:
             if (cycleStackTop < 0) {
@@ -264,6 +270,7 @@ void TreeNode::semanticCheck() {
                 typeError = true;
             }
             break;
+
         case STMT_RETURN:
 
             break;
@@ -271,13 +278,15 @@ void TreeNode::semanticCheck() {
             break;
         }
         break;
+
     case NODE_EXPR:
         this->type = this->child->type;
         this->pointLevel = this->child->pointLevel;
         break;
+
     case NODE_OP:
         if (optype == OP_INC || optype == OP_DEC || optype == OP_POS || optype == OP_NAG) {
-            // 一元运算符，输入 int, 输出 int, ++, --, +(一元), -(一元)
+            // 一元运算符, 输入 int, 输出 int, ++, --, +(一元), -(一元)
             if (this->child->type->type != VALUE_INT) {
                 cerr << "Error: need <int>, got <" << child->type->getTypeInfo()
                      << ">, operator is " << opType2String(optype) << ", at line " << lineno << endl;
@@ -286,8 +295,8 @@ void TreeNode::semanticCheck() {
             this->type = TYPE_INT;
         } 
         else if (optype == OP_EQ || optype == OP_NEQ || optype == OP_ASSIGN || optype == OP_DECLASSIGN) {
-            // 二元运算符，输入无限制，两侧同类型，==,!=,=
-            // ！！！不要在指针声明时候初始化！！！
+            // 二元运算符, 输入无限制, 两侧同类型, ==,!=,=
+            // ------------------- 不要在指针声明时候初始化 --------------------
             if (this->child->type->type != this->child->sibling->type->type) {
                 cerr << "Error: type in two sides of " << opType2String(optype)
                      << " operator mismatched, got <" << child->type->getTypeInfo()
@@ -305,7 +314,7 @@ void TreeNode::semanticCheck() {
                 this->type = TYPE_BOOL;
         }
         else if (optype == OP_GRA || optype == OP_LES || optype == OP_GRAEQ || optype == OP_LESEQ) {
-            // 二元运算符，输入int，输出bool，>,<,>=,<=
+            // 二元运算符, 输入 int, 输出 bool, >,<,>=,<=
             if (this->child->type->type != this->child->sibling->type->type || this->child->type->type != VALUE_INT) {
                 cerr << "Error: need <int>, got <" << child->type->getTypeInfo()
                      << "> and <" << child->sibling->type->getTypeInfo()
@@ -315,7 +324,7 @@ void TreeNode::semanticCheck() {
             this->type = TYPE_BOOL;
         }
         else if (optype == OP_ADDASSIGN || optype == OP_SUBASSIGN || optype == OP_MULASSIGN || optype == OP_DIVASSIGN) {
-            // 二元运算符，输入int，输出int，+=,-=,*=,/=
+            // 二元运算符, 输入 int, 输出 int, +=,-=,*=,/=
             if (this->child->type->type != this->child->sibling->type->type || this->child->type->type != VALUE_INT) {
                 cerr << "Error: need <int>, got <" << child->type->getTypeInfo()
                      << "> and <" << child->sibling->type->getTypeInfo()
@@ -329,7 +338,7 @@ void TreeNode::semanticCheck() {
             this->type = TYPE_INT;
         }
         else if (optype == OP_NOT || optype == OP_AND || optype == OP_OR) {
-            // 二元运算符，输入bool，输出bool，!,&&,||
+            // 二元运算符, 输入 bool, 输出 bool, !,&&,||
             if (this->child->type->type != VALUE_BOOL 
                 || (optype != OP_NOT 
                 && this->child->type->type != this->child->sibling->type->type)) {
@@ -341,7 +350,7 @@ void TreeNode::semanticCheck() {
             this->type = TYPE_BOOL;
         }
         else if (optype == OP_INDEX) {
-            // 二元运算符，输入int，输出左值类型，[]下标运算符
+            // 二元运算符, 输入 int, 输出左值类型, [] 下标运算符
             if (this->child->sibling->type->type != VALUE_INT) {
                 cerr << "Error: need <int>, got <" << child->sibling->type->getTypeInfo()
                      << ">, operator is " << opType2String(optype) << ", at line " << lineno << endl;
@@ -350,7 +359,7 @@ void TreeNode::semanticCheck() {
             this->type = this->child->type;
         }
         else {
-            // 二元运算符，输入int，输出int，+,-,*,/,%
+            // 二元运算符, 输入 int, 输出 int, +,-,*,/,%
             if (this->child->type->type != this->child->sibling->type->type || this->child->type->type != VALUE_INT) {
                 cerr << "Error: need <int>, got <" << child->type->getTypeInfo()
                      << "> and <" << child->sibling->type->getTypeInfo()
@@ -360,9 +369,11 @@ void TreeNode::semanticCheck() {
             this->type = TYPE_INT;
         }
         break;
+
     case NODE_PROG:
         this->type = TYPE_NONE;
         break;
+
     case NODE_VARLIST:
     case NODE_PARAM:
         if (this->child)
@@ -640,14 +651,17 @@ void TreeNode::printConstVal() {
 
 void InitIOFunctionNode() {
     int k = 4;
+
     nodeScanf->lineno = -1;
     nodeScanf->var_name = "scanf";
     nodeScanf->var_scope = "1";
     nodeScanf->type = new Type(COMPOSE_FUNCTION);
     nodeScanf->type->retType = TYPE_VOID;
     nodeScanf->type->paramType[nodeScanf->type->paramNum++] = TYPE_STRING;
+
     for (int i = 0; i < k;i++)
         nodeScanf->type->paramType[nodeScanf->type->paramNum++] = TYPE_INT;
+
     idNameList.insert(make_pair("scanf", "1"));
     idList[make_pair("scanf", "1")] = nodeScanf;
     nodePrintf->lineno = -1;
@@ -656,8 +670,10 @@ void InitIOFunctionNode() {
     nodePrintf->type = new Type(COMPOSE_FUNCTION);
     nodePrintf->type->retType = TYPE_VOID;
     nodePrintf->type->paramType[nodePrintf->type->paramNum++] = TYPE_STRING;
+
     for (int i = 0; i < k;i++)
         nodePrintf->type->paramType[nodePrintf->type->paramNum++] = TYPE_INT;
+
     idNameList.insert(make_pair("printf", "1"));
     idList[make_pair("printf", "1")] = nodePrintf;
 }

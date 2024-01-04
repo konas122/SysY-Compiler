@@ -28,7 +28,7 @@ main: src/global.h.gch
 run: lex yacc main
 
 clean:
-	rm -f src/*.output src/main.l.yy.cpp src/main.tab.cpp src/main.tab.h src/main.output src/global.h.gch $(TARGET) *.o ./build/* 
+	rm -f src/*.output src/main.l.yy.cpp src/main.tab.cpp src/main.tab.h src/main.output src/global.h.gch $(TARGET) *.o ./build/main 
 
 
 syntax: run
