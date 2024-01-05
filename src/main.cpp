@@ -6,7 +6,7 @@ extern FILE *yyin;
 extern int yyparse();
 
 bool parserError = false;
-bool typeError = false;
+bool semanticError = false;
 
 using namespace std;
 
@@ -18,15 +18,17 @@ int main(int argc, char *argv[]) {
         FILE *fin = fopen(argv[1], "r");
         if (fin != nullptr)
             yyin = fin;
-        else
+        else {
             cerr << "failed to open file: " << argv[1] << endl;
+            return -1;
+        }
     }
 
     InitIOFunctionNode();
     yyparse();
 
     if (parserError || root == nullptr)
-        return 0;
+        return -2;
 
     root->genNodeId();
 
@@ -36,14 +38,15 @@ int main(int argc, char *argv[]) {
     root->printAST_brief();
     cout << "# --------------------------------------------------" << endl;
 #endif
-    
+
     root->semanticCheck();
+    if (semanticError)
+        return -3;
 
 #ifndef AST
+    root->genCode();
 #endif
 
-    if (typeError)
-        return 0;
 
     return 0;
 }

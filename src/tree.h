@@ -154,6 +154,6 @@ void InitIOFunctionNode();
 static TreeNode* nodeScanf = new TreeNode(0, NODE_VAR);
 static TreeNode* nodePrintf = new TreeNode(0, NODE_VAR);
 
-extern bool typeError;
+extern bool semanticError;
 
 #endif

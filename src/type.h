@@ -1,7 +1,6 @@
 #ifndef __TYPE_H__
 #define __TYPE_H__
 
-#include "debug.h"
 #include "global.h"
 
 using namespace std;
@@ -16,7 +15,8 @@ using namespace std;
 // #define DEBUG
 #ifdef DEBUG
 #define PARSER_DEBUG
-#ifdef PARSER_DEBUG
+
+#ifdef  PARSER_DEBUG
 #define SCOPE_DEBUG
 #define ID_REDUCE_DEBUG
 #define DECL_DEBUG
@@ -28,10 +28,11 @@ using namespace std;
 #define FUNCALL_DEBUG
 #endif
 
-// #define typeCheck_debug
-// #define childNumdebug
-// #define varDeclDebug
-// #define EXIT_AT_GRAMMA_ERROR
+#define typeCheck_debug
+#define childNumdebug
+#define varDeclDebug
+#define EXIT_AT_GRAMMA_ERROR
+#endif
 
 
 enum ValueType {

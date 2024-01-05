@@ -2,7 +2,7 @@ CC := g++
 CFLAGS := -w -Wextra -std=c++11
 TARGET := ./build/main
 
-SYNTAX_ACCHECK := 1
+SYNTAX_ACCHECK := 0
 
 
 all: run
@@ -31,6 +31,7 @@ clean:
 	rm -f src/*.output src/main.l.yy.cpp src/main.tab.cpp src/main.tab.h src/main.output src/global.h.gch $(TARGET) *.o ./build/main 
 
 
+# To Run this, you should define macro `AST` in `type.h:14`
 syntax: run
 	./build/main test/syntax/test.c > result.txt
 
