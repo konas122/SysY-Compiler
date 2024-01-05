@@ -35,6 +35,7 @@ clean: clean_out
 
 
 # To get the AST, you should define macro `AST` in `main.cpp:1`
+# Syntax check
 syntax: run
 	./build/main test/syntax/test.c > result.txt
 
@@ -50,32 +51,14 @@ syntax3: run
 syntax4: run
 	./build/main test/syntax/test4.c > result.txt
 
-ifeq ($(SYNTAX_ACCHECK), 0)
 syntax2: run
 	./build/main test/syntax/test2.c > result.txt
 
 syntax5: run
 	./build/main test/syntax/test5.c > result.txt
 
-1:
-	./build/parser test/syntax/test1.c
 
-2:
-	./build/parser test/syntax/test1.c
-
-5:
-	./build/parser test/syntax/test1.c
-
-else
-syntax2: run
-	./build/parser test/syntax/test2.c
-
-syntax5: run
-	./build/parser test/syntax/test5.c
-
-endif
-
-
+# Semantic check
 check1: run
 	./build/main test/semantic/test1.c > result.txt
 
