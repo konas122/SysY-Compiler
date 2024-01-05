@@ -27,10 +27,10 @@ main: src/global.h.gch
 
 run: lex yacc main
 
-clean_asm:
-	rm -f asm/*.s asm/*.S asm/*.asm
+clean_out:
+	rm -f out/*.s out/*.S out/*.asm out/result out/result_* out/*.o
 
-clean: clean_asm
+clean: clean_out
 	rm -f src/*.output src/main.l.yy.cpp src/main.tab.cpp src/main.tab.h src/main.output src/global.h.gch $(TARGET) *.o ./build/main
 
 
