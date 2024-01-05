@@ -1,0 +1,6 @@
+*.out
+*.output
+
+draft
+
+lex.yy.c

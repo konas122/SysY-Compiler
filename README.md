@@ -15,12 +15,29 @@ as (GNU assembler)
 ## Build
 
 ```shell
-make all
+$ make all
+
+# for clean
+$ make clean
 ```
 
 ## 词法分析
 
-`src/sysy.l`
+词法分析器存放在 `lexer`, 独立于编译器的 `src` 文件夹. 
+
+`lexer` 中的词法分析器是简易版的, 和最终实现编译器用的词法分析程序 `src/sysy.l` 不同. 
+
+测试样例在 `lexer/test` 中
+
+### 使用
+
+> 使用命令 `cd lexer` 来到 `lexer` 文件夹中
+> 
+> 使用命令 `make test3` 来测试 `test/test3.c`
+> 
+> 使用命令 `make test4` 来测试 `test/test4.c`
+
+使用其他测试样例, 可以依次类推
 
 ## 语法分析
 
