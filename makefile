@@ -52,32 +52,25 @@ syntax4: run
 
 ifeq ($(SYNTAX_ACCHECK), 0)
 syntax2: run
-	echo ""
 	./build/main test/syntax/test2.c > result.txt
 
 syntax5: run
-	echo ""
 	./build/main test/syntax/test5.c > result.txt
 
 1:
-	echo ""
 	./build/parser test/syntax/test1.c
 
 2:
-	echo ""
 	./build/parser test/syntax/test1.c
 
 5:
-	echo ""
 	./build/parser test/syntax/test1.c
 
 else
 syntax2: run
-	echo ""
 	./build/parser test/syntax/test2.c
 
 syntax5: run
-	echo ""
 	./build/parser test/syntax/test5.c
 
 endif
