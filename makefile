@@ -27,11 +27,14 @@ main: src/global.h.gch
 
 run: lex yacc main
 
-clean:
-	rm -f src/*.output src/main.l.yy.cpp src/main.tab.cpp src/main.tab.h src/main.output src/global.h.gch $(TARGET) *.o ./build/main 
+clean_asm:
+	rm -f asm/*.s asm/*.S asm/*.asm
+
+clean: clean_asm
+	rm -f src/*.output src/main.l.yy.cpp src/main.tab.cpp src/main.tab.h src/main.output src/global.h.gch $(TARGET) *.o ./build/main
 
 
-# To Run this, you should define macro `AST` in `type.h:14`
+# To get the AST, you should define macro `AST` in `main.cpp:1`
 syntax: run
 	./build/main test/syntax/test.c > result.txt
 

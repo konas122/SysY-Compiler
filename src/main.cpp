@@ -1,3 +1,5 @@
+// #define AST
+
 #include <fstream>
 #include "common.h"
 
@@ -12,7 +14,6 @@ using namespace std;
 
 
 int main(int argc, char *argv[]) {
-    cerr << endl;
 
     if (argc == 2) {
         FILE *fin = fopen(argv[1], "r");

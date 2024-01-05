@@ -319,7 +319,7 @@ varDecl
     }
 #ifdef DECL_DEBUG
 	cout << "# $ reduce varDecl type = " << $1->type->getTypeInfo() << endl;
-	// $$->printAST();
+	$$->printAST();
   #endif
   }
 ;
@@ -602,7 +602,7 @@ expr
 	$$->addChild($3);
 #ifdef ASSIGN_DEBUG
 	cout << "# $ reduce ASSIGN at scope : " << presentScope << ", at line " << lineno << endl;
-	// $$->printAST();
+	$$->printAST();
 #endif
   }
 | compIdentifier PLUSASSIGN expr {

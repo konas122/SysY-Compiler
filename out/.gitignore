@@ -1,0 +1,14 @@
+*.c
+*.s
+*.S
+*.asm
+
+*.o
+*.bin
+
+*.out
+*.output
+
+lv_*
+result
+result_*

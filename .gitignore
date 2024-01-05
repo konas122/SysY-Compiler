@@ -10,6 +10,9 @@ drafts/
 *.exe
 *.pdb
 
+*.out
+*.output
+
 main
 parser
 result.txt
@@ -21,3 +24,9 @@ main.tab.c
 main.tab.cpp
 main.l.yy.c
 main.l.yy.cpp
+
+*.o
+*.bin
+result
+output
+a.out
