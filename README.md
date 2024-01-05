@@ -12,6 +12,12 @@ gcc
 as (GNU assembler)
 ```
 
+## Build
+
+```shell
+make all
+```
+
 ## 词法分析
 
 `src/sysy.l`
