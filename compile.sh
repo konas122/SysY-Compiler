@@ -3,7 +3,14 @@
 echo "There are 3 levels in 'asm_test.'"
 read -p "Choose one [1/2/3]: " level
 
-if [ $level -le 0 ] || [ $level -gt 3 ]; then
+if [[ $level =~ ^[0-9]+$ ]]; then
+    if [ $level -le 0 ] || [ $level -gt 3 ]; then
+        level=1
+    fi
+elif [[ $level == "q" ]] || [[ $level == "Q" ]] || [[ $level == "quit" ]] || [[ $level == "Quit" ]]; then
+    echo "quit"
+    exit
+else
     level=1
 fi
 
@@ -19,11 +26,25 @@ fi
 
 num=0
 count=`find $src_path -type f -name "*.c" | wc -l`
-echo -e "\nThere are $count files in level$level"
+echo -e "\nThere are $count files in level_$level"
+
+if ! [[ $num =~ ^[0-9]+$ ]]; then
+    if [[ $num == "q" ]]; then
+        echo "quit"
+        exit
+    fi
+    num=1
+fi
 
 while [ $num -eq 0 ]; do
-    read -p "Choose one from level$level [1...$count]: " num
-    if [ $num -eq 0 ]; then
+    read -p "Choose one from level_$level [1...$count]: " num
+    if ! [[ $num =~ ^[0-9]+$ ]]; then
+        if [[ $num == "q" ]] || [[ $num == "Q" ]] || [[ $num == "quit" ]] || [[ $num == "Quit" ]]; then
+            echo "quit"
+            exit
+        fi
+        num=1
+    elif [ $num -eq 0 ]; then
         ls -l test/asm_test/$level | awk '{print $9}'
     elif [ $num -lt 0 ] || [ $num -gt $count ]; then
         num=1

@@ -3,7 +3,14 @@
 echo "There are 3 levels in 'asm_test.'"
 read -p "Choose one [1/2/3]: " level
 
-if [ $level -le 0 ] || [ $level -gt 3 ]; then
+
+if ! [[ $level =~ ^[0-9]+$ ]]; then
+    if [[ $level == "q" ]] || [[ $level == "Q" ]] || [[ $level == "quit" ]] || [[ $level == "Quit" ]]; then
+        echo "quit"
+        exit
+    fi
+    level=1
+elif [ $level -le 0 ] || [ $level -gt 3 ]; then
     level=1
 fi
 

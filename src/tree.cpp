@@ -3,9 +3,6 @@
 using namespace std;
 
 
-string _ident = "\"SysY_Compiler: (Debian) 1.0.0\"";
-string _section = ".note.GNU-stack,\"\",@progbits";
-
 string operator + (string &content, int number) {
     return content + to_string(number);
 }
@@ -994,8 +991,8 @@ void TreeNode::genCode() {
             p = p->sibling;
         }
 
-        cout << "\n\t.ident\t" << _ident << endl
-             << "\t.section " << _section << endl;
+        cout << "\n\t.ident\t" << "\"SysY_Compiler: (Debian) 1.0.0\"" << endl
+             << "\t.section " << ".note.GNU-stack,\"\",@progbits" << endl;
         break;
 
     case NODE_FUNCALL:

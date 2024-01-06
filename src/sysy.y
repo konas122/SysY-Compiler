@@ -239,9 +239,11 @@ declIdentifier
 	$$ = $1;
 	$$->var_scope = presentScope;
 	$$->type = new Type(NOTYPE);
-	#ifdef ID_REDUCE_DEBUG
-		cout << "# $ reduce declIdentifier : " << $$->var_name << ", at scope :" << presentScope << endl;
-	#endif
+
+#ifdef ID_REDUCE_DEBUG
+	cout << "# $ reduce declIdentifier : " << $$->var_name << ", at scope :" << presentScope << endl;
+#endif
+
 	if (idList.count(make_pair($$->var_name, $$->var_scope)) != 0) {
 		string t = "Redeclared identifier: " + $$->var_name;
 		yyerror(t.c_str());
