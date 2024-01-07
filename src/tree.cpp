@@ -427,9 +427,9 @@ void TreeNode::printAST() {
 }
 
 void TreeNode::printAST_brief(int tab) {
-    cout << "line " << lineno << "\t";
     for (int i = 0; i < tab; i++)
         cout << "\t";
+    cout << "(" << lineno << ")\t";
     printNodeInfo();
     cout << endl;
     TreeNode *p = this->child;
