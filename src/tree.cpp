@@ -24,7 +24,7 @@ map<pair<string, string>, TreeNode *> idList;
 map<string, int> strList;
 
 // map <作用域+变量名,  变量相对于 ebp 偏移量> 局部变量表, 在每次函数定义前清空
-// <"11a", "-12"> 表示第一个函数的栈上第一个分配的局部变量 (前 3 个 4 字节为 bx, cx, dx 备份用, 始终保留)
+// <"a_11", "-12"> 表示第一个函数的栈上第一个分配的局部变量 (前 3 个 4 字节为 ebx, ecx, edx 备份用, 始终保留)
 map<string, int> LocalVarList;
 
 // 栈上为局部变量分配的空间总大小, 在 return 时进行清理
