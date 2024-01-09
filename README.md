@@ -21,17 +21,6 @@ $ make all
 $ make clean
 ```
 
-
-### 使用
-
-> 使用命令 `cd lexer` 来到 `lexer` 文件夹中
-> 
-> 使用命令 `make test3` 来测试 `test/test3.c`
-> 
-> 使用命令 `make test4` 来测试 `test/test4.c`
-
-使用其他测试样例, 可以依次类推
-
 ## 语法分析
 
 测试样例在 `test/syntax` 中
