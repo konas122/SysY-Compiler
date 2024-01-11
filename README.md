@@ -21,6 +21,16 @@ $ make all
 $ make clean
 ```
 
+## Usage
+
+```shell
+$ ./build/main testfile.c > result.asm
+
+$ as -32 result.asm -o result.o
+$ gcc -m32 result.o -o result
+$ ./result
+```
+
 ## 语法分析
 
 测试样例在 `test/syntax` 中
