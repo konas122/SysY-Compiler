@@ -1,6 +1,6 @@
 CC := g++
 CFLAGS := -w -Wextra -std=c++11
-TARGET := ./build/main
+TARGET := build/main
 
 SYNTAX_ACCHECK := 0
 
@@ -21,7 +21,7 @@ lex: src/main.l.yy.c
 yacc: src/main.tab.c
 
 main: src/global.h.gch
-	$(CC) $(CFLAGS) $(shell ls ./src/*.cpp) -o ./build/main
+	$(CC) $(CFLAGS) $(shell ls ./src/*.cpp) -o $(TARGET)
 
 .PHONY: all clean main run lex yacc debug
 
@@ -31,7 +31,7 @@ clean_out:
 	rm -f out/*.s out/*.S out/*.asm out/result out/result_* out/*.o
 
 clean: clean_out
-	rm -f src/*.output src/main.l.yy.cpp src/main.tab.cpp src/main.tab.h src/main.output src/global.h.gch $(TARGET) *.o ./build/main
+	rm -f src/*.output src/main.l.yy.cpp src/main.tab.cpp src/main.tab.h src/main.output src/global.h.gch $(TARGET) *.o
 
 
 # To get the AST, you should define macro `AST` in `main.cpp:1`
