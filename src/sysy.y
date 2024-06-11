@@ -104,7 +104,7 @@ pIdentifier
 		yyerror("Continuous addr operator");
 	}
 #ifdef POINT_DEBUG
-    cout << "$ pIdentifier: " << $$->var_name
+    cout << "# $ pIdentifier: " << $$->var_name
          << ", pointLevel: " << $$->pointLevel << endl;
 #endif
  }
@@ -453,7 +453,7 @@ stmt
 	$$->addChild($7);
 	scopePop();
 #ifdef IFELSE_DEBUG
-		cout << "$ reduce IF-ELSE at scope : " << presentScope << ", at line " << lineno << endl;
+		cout << "# $ reduce IF-ELSE at scope : " << presentScope << ", at line " << lineno << endl;
 #endif
   }
 | IF LPAREN cond RPAREN stmt_ {
@@ -463,7 +463,7 @@ stmt
 	$$->addChild($5);
 	scopePop();
 #ifdef IF_DEBUG
-		cout << "$ reduce IF at scope : " << presentScope << ", at line " << lineno << endl;
+		cout << "# $ reduce IF at scope : " << presentScope << ", at line " << lineno << endl;
 #endif
   }
 | WHILE LPAREN cond RPAREN stmt_ {
@@ -473,7 +473,7 @@ stmt
 	$$->addChild($5);
 	scopePop();
 #ifdef WHILE
-		cout << "$ reduce WHILE at scope : " << presentScope << ", at line " << lineno << endl;
+		cout << "# $ reduce WHILE at scope : " << presentScope << ", at line " << lineno << endl;
 #endif
   }
 | FOR LPAREN basicType varDefs SEMICOLON cond SEMICOLON expr RPAREN stmt_ {
@@ -716,7 +716,7 @@ primaryExpr
 	$$->addChild($1);
 	$$->addChild($3);
 #ifdef FUNCALL_DEBUG
-		cout << "$ reduce function call at scope : " << presentScope << ", at line " << lineno << endl;
+		cout << "# $ reduce function call at scope : " << presentScope << ", at line " << lineno << endl;
 #endif
   }
 | pIdentifier LPAREN RPAREN {
@@ -724,7 +724,7 @@ primaryExpr
 	$$->addChild($1);
     $$->addChild(new TreeNode(lineno, NODE_VARLIST));
 #ifdef FUNCALL_DEBUG
-		cout << "$ reduce function call at scope : " << presentScope << ", at line " << lineno << endl;
+		cout << "# $ reduce function call at scope : " << presentScope << ", at line " << lineno << endl;
 #endif
   }
 | compIdentifier { $$ = new TreeNode(lineno, NODE_EXPR); $$->addChild($1); }
@@ -859,7 +859,7 @@ void scopePush() {
 	max_scope_id = SCOPT_ID_BASE;
 	top++;
 #ifdef SCOPE_DEBUG
-	cout << "* push -> " << presentScope << ", at line " << lineno << endl;
+	cout << "# * push -> " << presentScope << ", at line " << lineno << endl;
 #endif
 }
 
@@ -869,6 +869,6 @@ void scopePop() {
 	presentScope = presentScope.substr(0, presentScope.length() - 1);
 	top--;
 #ifdef SCOPE_DEBUG
-	cout << "* pop -> " << presentScope << ", at line " << lineno << endl;
+	cout << "# * pop -> " << presentScope << ", at line " << lineno << endl;
 #endif
 }

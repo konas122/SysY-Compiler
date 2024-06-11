@@ -1,5 +1,5 @@
 CC := g++
-CFLAGS := -w -Wextra -std=c++11
+CFLAGS += -w -Wextra -std=c++11
 TARGET := build/main
 
 SYNTAX_ACCHECK := 0
@@ -26,6 +26,10 @@ main: src/global.h.gch
 .PHONY: all clean main run lex yacc debug
 
 run: lex yacc main
+
+CFLAGS += -g
+debug: lex yacc
+	$(CC) -DDEBUG ${CFLAGS} $(shell ls ./src/*.cpp) -o $(TARGET)
 
 clean_out:
 	rm -f out/*.s out/*.S out/*.asm out/result out/result_* out/*.o

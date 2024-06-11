@@ -11,7 +11,6 @@ using namespace std;
 #define SCOPT_ID_BASE '1'
 
 
-// #define DEBUG
 #ifdef DEBUG
 #define PARSER_DEBUG
 

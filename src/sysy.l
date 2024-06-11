@@ -202,7 +202,7 @@ ERRORINT    [0-9]+.[0-9]+
     node->var_name = string(yytext);
     yylval = node;
 #ifdef ID_TOKEN_DEBUG
-    cout << "%% get IDENTIFIER :" << yytext <<endl;
+    cout << "# %% get IDENTIFIER :" << yytext <<endl;
 #endif
     return IDENTIFIER;
 }

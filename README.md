@@ -21,6 +21,12 @@ $ make all
 $ make clean
 ```
 
+## Debug
+
+```shell
+$ make debug
+```
+
 ## Usage
 
 ```shell
