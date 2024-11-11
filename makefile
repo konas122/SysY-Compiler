@@ -29,7 +29,7 @@ run: lex yacc main
 
 CFLAGS += -g
 debug: lex yacc
-	$(CC) -DDEBUG ${CFLAGS} $(shell ls ./src/*.cpp) -o $(TARGET)
+	$(CC) -DDEBUG ${CFLAGS} -DAST $(shell ls ./src/*.cpp) -o $(TARGET)
 
 clean_out:
 	rm -f out/*.s out/*.S out/*.asm out/result out/result_* out/*.o
@@ -38,7 +38,6 @@ clean: clean_out
 	rm -f src/*.output src/main.l.yy.cpp src/main.tab.cpp src/main.tab.h src/main.output src/global.h.gch $(TARGET) *.o
 
 
-# To get the AST, you should define macro `AST` in `main.cpp:1`
 # Syntax check
 syntax: run
 	./build/main test/syntax/test.c > result.txt

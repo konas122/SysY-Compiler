@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
     root->genNodeId();
 
 #ifdef AST
-    cout << "# ------------------------- detailed ----------------------------" << endl;
+    cout << "\n# ------------------------- detailed ----------------------------" << endl;
     root->printAST();
     cout << "\n# ------------------------- brief -------------------------------" << endl;
     root->printAST_brief();
